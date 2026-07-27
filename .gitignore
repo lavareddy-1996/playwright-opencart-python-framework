@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.venv/
+venv/
+env/
+
+# Pytest / test artifacts
+reports/
+.pytest_cache/
+allure-results/
+allure-report/
+test-results/
+htmlcov/
+coverage.xml
+.coverage
+
+# Playwright
+playwright-report/
+playwright/.cache/
+
+# Env / secrets
+.env
+
+# IDE
+.vscode/
+.idea/
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Python Build
+build/
+dist/
+*.egg-info/
+
+# Traces
+traces/
+
+# Videos
+videos/
+
+# Screenshots
+screenshots/
