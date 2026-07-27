@@ -77,3 +77,13 @@ allure serve reports/allure-results
   search, cart, and checkout flows.
 - Wire up a GitHub Actions workflow to run the suite and publish the Allure
   report on push.
+
+## CI/CD
+
+This project is integrated with GitHub and will use GitHub Actions for Continuous Integration (CI).
+
+Future enhancements:
+- GitHub Actions
+- Jenkins
+- Allure Reports
+- Cross-platform execution
