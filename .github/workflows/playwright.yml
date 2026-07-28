@@ -1,5 +1,9 @@
 name: Playwright CI Pipeline
 
+env:
+  BASE_URL: https://tutorialsninja.com/demo/
+
+
 on:
   push:
     branches:
@@ -38,11 +42,13 @@ jobs:
         run: |
           playwright install --with-deps
 
-      - name: Run Pytest
+      - name: Run Automation Tests
+        env:
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          BASE_URL: ${{ env.BASE_URL }}
         run: |
-          pytest \
-            --html=reports/myreport.html \
-            --self-contained-html
+          pytest tests/test_login.py -v
 
       - name: Upload HTML Report
         if: always()

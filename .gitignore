@@ -1,14 +1,17 @@
+# ==========================
 # Python
+# ==========================
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-*.pyc
 .venv/
 venv/
 env/
 
-# Pytest / test artifacts
+# ==========================
+# Test Reports
+# ==========================
 reports/
 .pytest_cache/
 allure-results/
@@ -18,35 +21,37 @@ htmlcov/
 coverage.xml
 .coverage
 
+# ==========================
 # Playwright
+# ==========================
 playwright-report/
 playwright/.cache/
 
-# Env / secrets
+# ==========================
+# Environment Variables
+# ==========================
 .env
 
+# ==========================
 # IDE
+# ==========================
 .vscode/
 .idea/
 
-
-# OS
+# ==========================
+# Operating System
+# ==========================
 .DS_Store
 Thumbs.db
 
+# ==========================
 # Logs
+# ==========================
 *.log
 
-# Python Build
+# ==========================
+# Build Artifacts
+# ==========================
 build/
 dist/
 *.egg-info/
-
-# Traces
-traces/
-
-# Videos
-videos/
-
-# Screenshots
-screenshots/

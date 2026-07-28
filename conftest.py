@@ -2,6 +2,8 @@ import os
 import pytest
 import allure
 from playwright.sync_api import sync_playwright
+from pages.login_page import LoginPage
+from pages.home_page import HomePage
 
 # ========================================================================
 # PYTEST + PLAYWRIGHT TEST CONFIGURATION FILE
@@ -159,3 +161,16 @@ def page(context, request):
             allure.attach.file(video_path, name="video", extension="webm")
         except Exception as e:
             print(f"Could not attach video: {e}")
+
+
+@pytest.fixture()
+def login_page(page):
+    """
+    Creates LoginPage object using Playwright page fixture.
+    """
+    return LoginPage(page)
+
+
+@pytest.fixture()
+def home_page(page):
+    return HomePage(page)
