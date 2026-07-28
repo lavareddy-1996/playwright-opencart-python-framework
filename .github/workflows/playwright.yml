@@ -2,36 +2,46 @@ name: Playwright CI Pipeline
 
 env:
   BASE_URL: https://tutorialsninja.com/demo/
-
-
+# Trigger conditions
 on:
   push:
     branches:
       - main
-      - feature/**
 
   pull_request:
     branches:
       - main
-
-  workflow_dispatch:
-
+# Jobs
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  automation-tests:
+    # Matrix Strategy
+    strategy:
+      # Continue all browsers even if one fails
+      fail-fast: false
+      matrix:
+        # Python versions
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.14"
+        # Browsers
+        browser:
+          - chromium
+          - firefox
+          - webkit
 
+    # Operating System
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      # Step 1: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      # Step 2: Setup Python
+      - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
-          cache: pip
-
-      - name: Verify Python Version
-        run: python --version
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
