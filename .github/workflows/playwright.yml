@@ -19,6 +19,10 @@ jobs:
       # Continue all browsers even if one fails
       fail-fast: false
       matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
         # Python versions
         python-version:
           - "3.11"
@@ -31,7 +35,7 @@ jobs:
           - webkit
 
     # Operating System
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       # Step 1: Checkout repository
       - name: Checkout Code
