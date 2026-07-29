@@ -1,6 +1,8 @@
 # search_results_page.py
 from playwright.sync_api import Page
-from pages.product_page import ProductPage  # Adjust import path based on your project structure
+from pages.product_page import (
+    ProductPage,
+)  # Adjust import path based on your project structure
 
 
 class SearchResultsPage:

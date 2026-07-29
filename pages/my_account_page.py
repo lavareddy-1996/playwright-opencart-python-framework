@@ -5,7 +5,9 @@
 # the page locators and actions from the actual test cases.
 
 from playwright.sync_api import Page
-from pages.logout_page import LogoutPage  # Adjust import path based on your project structure
+from pages.logout_page import (
+    LogoutPage,
+)  # Adjust import path based on your project structure
 
 
 class MyAccountPage:

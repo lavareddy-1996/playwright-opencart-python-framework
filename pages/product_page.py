@@ -6,7 +6,9 @@
 # from the test logic for better reusability and maintenance.
 
 from playwright.sync_api import Page, expect
-from pages.shopping_cart_page import ShoppingCartPage  # Adjust path as per your folder structure
+from pages.shopping_cart_page import (
+    ShoppingCartPage,
+)  # Adjust path as per your folder structure
 
 
 class ProductPage:
@@ -22,9 +24,9 @@ class ProductPage:
         # ===== Locators =====
         # Using CSS selectors to identify page elements
         self.txt_quantity = page.locator('input[name="quantity"]')
-        self.btn_add_to_cart = page.locator('#button-cart')
-        self.cnf_msg = page.locator('.alert.alert-success.alert-dismissible')
-        self.btn_items = page.locator('#cart')
+        self.btn_add_to_cart = page.locator("#button-cart")
+        self.cnf_msg = page.locator(".alert.alert-success.alert-dismissible")
+        self.btn_items = page.locator("#cart")
         self.lnk_view_cart = page.locator('strong:has-text("View Cart")')
 
     # ===== Quantity Methods =====
@@ -35,7 +37,7 @@ class ProductPage:
         Clears the existing value and enters the new quantity.
         """
         try:
-            self.txt_quantity.fill('')   # Clear existing value
+            self.txt_quantity.fill("")  # Clear existing value
             self.txt_quantity.fill(qty)  # Enter new quantity
         except Exception as e:
             print(f"Error while setting quantity: {e}")

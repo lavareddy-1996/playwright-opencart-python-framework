@@ -46,11 +46,11 @@ class RandomDataUtil:
     @staticmethod
     def get_random_alphanumeric(length: int) -> str:
         chars = string.ascii_letters + string.digits
-        return ''.join(random.choice(chars) for _ in range(length))
+        return "".join(random.choice(chars) for _ in range(length))
 
     @staticmethod
     def get_random_numeric(length: int) -> str:
-        return ''.join(random.choice(string.digits) for _ in range(length))
+        return "".join(random.choice(string.digits) for _ in range(length))
 
     def get_random_uuid(self) -> str:
         return str(self.faker.uuid4())

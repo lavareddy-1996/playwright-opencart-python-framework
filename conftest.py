@@ -21,12 +21,32 @@ from pages.home_page import HomePage
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", default="chromium", help="Browser: chromium, firefox, webkit")
-    parser.addoption("--headed", action="store_true", help="Run in headed (visible) mode")
-    parser.addoption("--base-url", default="https://tutorialsninja.com/demo/", help="Base URL for tests")
-    parser.addoption("--video", default="retain-on-failure", help="Record video: on, off, retain-on-failure")
-    parser.addoption("--screenshot", default="only-on-failure", help="Take screenshot: on, off, only-on-failure")
-    parser.addoption("--tracing", default="retain-on-failure", help="Tracing: on, off, retain-on-failure")
+    parser.addoption(
+        "--browser", default="chromium", help="Browser: chromium, firefox, webkit"
+    )
+    parser.addoption(
+        "--headed", action="store_true", help="Run in headed (visible) mode"
+    )
+    parser.addoption(
+        "--base-url",
+        default="https://tutorialsninja.com/demo/",
+        help="Base URL for tests",
+    )
+    parser.addoption(
+        "--video",
+        default="retain-on-failure",
+        help="Record video: on, off, retain-on-failure",
+    )
+    parser.addoption(
+        "--screenshot",
+        default="only-on-failure",
+        help="Take screenshot: on, off, only-on-failure",
+    )
+    parser.addoption(
+        "--tracing",
+        default="retain-on-failure",
+        help="Tracing: on, off, retain-on-failure",
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -111,7 +131,8 @@ def context(browser, request):
         os.makedirs("reports/traces", exist_ok=True)
         trace_path = f"reports/traces/{request.node.name}.zip"
         should_save = tracing_mode == "on" or (
-            tracing_mode == "retain-on-failure" and getattr(request.node, "rep_call", None)
+            tracing_mode == "retain-on-failure"
+            and getattr(request.node, "rep_call", None)
             and request.node.rep_call.failed
         )
         ctx.tracing.stop(path=trace_path if should_save else None)
@@ -154,7 +175,9 @@ def page(context, request):
 
     # ----- Video attachment -----
     video_mode = get_config_value(request.config, "video")
-    video_should_attach = video_mode == "on" or (video_mode == "retain-on-failure" and failed)
+    video_should_attach = video_mode == "on" or (
+        video_mode == "retain-on-failure" and failed
+    )
     if video_should_attach and pg.video:
         try:
             video_path = pg.video.path()

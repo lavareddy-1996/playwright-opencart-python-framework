@@ -1,6 +1,8 @@
 # shopping_cart_page.py
 from playwright.sync_api import Page
-from pages.checkout_page import CheckoutPage  # Adjust import path as per your project structure
+from pages.checkout_page import (
+    CheckoutPage,
+)  # Adjust import path as per your project structure
 
 
 class ShoppingCartPage:
