@@ -15,21 +15,18 @@ on:
 ####################################################
 # Permissions
 ####################################################
-
 permissions:
   contents: read
 
 ####################################################
 # Global Environment Variables
 ####################################################
-
 env:
   BASE_URL: https://tutorialsninja.com/demo/
 
 ####################################################
 # Jobs
 ####################################################
-
 jobs:
   automation-tests:
 
@@ -45,7 +42,6 @@ jobs:
     ##################################################
     # Matrix Strategy
     ##################################################
-
     strategy:
       fail-fast: false
 
@@ -63,20 +59,17 @@ jobs:
     ##################################################
     # Steps
     ##################################################
-
     steps:
 
       ##################################################
       # Checkout Repository
       ##################################################
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       ##################################################
-      # Setup Python + Pip Cache
+      # Setup Python
       ##################################################
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -86,21 +79,18 @@ jobs:
       ##################################################
       # Upgrade pip
       ##################################################
-
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
 
       ##################################################
-      # Install Project Dependencies
+      # Install Dependencies
       ##################################################
-
       - name: Install Dependencies
-        run: pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
 
       ##################################################
       # Cache Playwright Browsers
       ##################################################
-
       - name: Cache Playwright Browsers
         uses: actions/cache@v4
         with:
@@ -112,26 +102,25 @@ jobs:
       ##################################################
       # Install Playwright Browsers
       ##################################################
-
       - name: Install Playwright Browsers
-        run: playwright install
+        run: python -m playwright install
 
       ##################################################
-      # Execute Automation Tests
+      # Execute Tests
       ##################################################
-
       - name: Execute Playwright Tests
         env:
           TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           BASE_URL: ${{ env.BASE_URL }}
 
-        run: pytest tests/test_login.py --browser=${{ matrix.browser }}
+        run: |
+          python -m pytest tests/test_login.py \
+          --pw-browser=${{ matrix.browser }}
 
       ##################################################
       # Upload HTML Report
       ##################################################
-
       - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -145,27 +134,25 @@ jobs:
       ##################################################
       # Upload Allure Results
       ##################################################
-
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: allure-results-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.browser }}
-          path: reports/allure-results/
+          path: reports/allure-results
           retention-days: 7
           if-no-files-found: warn
 
       ##################################################
-      # Upload Playwright Test Results
+      # Upload Test Results
       ##################################################
-
-      - name: Upload Playwright Test Results
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
 
         with:
           name: test-results-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.browser }}
-          path: test-results/
+          path: test-results
           retention-days: 7
           if-no-files-found: warn
