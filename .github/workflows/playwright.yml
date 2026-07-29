@@ -1,8 +1,11 @@
 name: Playwright CI Pipeline
 
+permissions:
+  contents: read
+
 env:
   BASE_URL: https://tutorialsninja.com/demo/
-# Trigger conditions
+
 on:
   push:
     branches:
@@ -11,86 +14,128 @@ on:
   pull_request:
     branches:
       - main
-# Jobs
+
 jobs:
   automation-tests:
-    # Matrix Strategy
+
+    name: >
+      ${{ matrix.os }} |
+      Python ${{ matrix.python-version }} |
+      ${{ matrix.browser }}
+
+    runs-on: ${{ matrix.os }}
+
+    timeout-minutes: 30
+
     strategy:
-      # Continue all browsers even if one fails
       fail-fast: false
+
       matrix:
+
         os:
           - ubuntu-latest
-          - windows-latest
-          - macos-latest
-        # Python versions
+
         python-version:
+          - "3.10"
           - "3.11"
-          - "3.12"
-          - "3.14"
-        # Browsers
+
         browser:
           - chromium
-          - firefox
-          - webkit
 
-    # Operating System
-    runs-on: ${{ matrix.os }}
     steps:
-      # Step 1: Checkout repository
-      - name: Checkout Code
+
+      ##################################################
+      # Checkout Repository
+      ##################################################
+
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Python
-      - name: Setup Python ${{ matrix.python-version }}
+      ##################################################
+      # Setup Python
+      ##################################################
+
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
+      ##################################################
+      # Upgrade pip
+      ##################################################
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      ##################################################
+      # Install Project Dependencies
+      ##################################################
+
       - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
+
+      ##################################################
+      # Install Playwright Browsers
+      ##################################################
 
       - name: Install Playwright Browsers
-        run: |
-          playwright install --with-deps
+        run: playwright install
 
-      - name: Run Automation Tests
+      ##################################################
+      # Execute Automation Tests
+      ##################################################
+
+      - name: Execute Playwright Tests
         env:
           TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           BASE_URL: ${{ env.BASE_URL }}
+
         run: |
-          pytest tests/test_login.py -v
+          pytest tests/test_login.py \
+          --browser=${{ matrix.browser }}
+
+      ##################################################
+      # Upload HTML Report
+      ##################################################
 
       - name: Upload HTML Report
         if: always()
+
         uses: actions/upload-artifact@v4
+
         with:
-          name: pytest-html-report
-          path: reports/
+          name: html-report-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.browser }}
+          path: reports/myreport.html
+          retention-days: 7
+          if-no-files-found: warn
+
+      ##################################################
+      # Upload Allure Results
+      ##################################################
 
       - name: Upload Allure Results
         if: always()
+
         uses: actions/upload-artifact@v4
+
         with:
-          name: allure-results
+          name: allure-results-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.browser }}
           path: reports/allure-results/
-          if-no-files-found: ignore
+          retention-days: 7
+          if-no-files-found: warn
 
-      - name: Upload Videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-videos
-          path: reports/videos/
-          if-no-files-found: ignore
+      ##################################################
+      # Upload Playwright Test Results
+      ##################################################
 
-      - name: Upload Trace Files
+      - name: Upload Playwright Test Results
         if: always()
+
         uses: actions/upload-artifact@v4
+
         with:
-          name: playwright-traces
-          path: reports/traces/
-          if-no-files-found: ignore
+          name: test-results-${{ matrix.os }}-${{ matrix.python-version }}-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: warn
