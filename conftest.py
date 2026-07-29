@@ -22,42 +22,30 @@ from pages.home_page import HomePage
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--pw-browser",
-        default="chromium",
-        help="Browser: chromium, firefox, webkit",
+        "--browser", default="chromium", help="Browser: chromium, firefox, webkit"
     )
-
     parser.addoption(
-        "--pw-headed",
-        action="store_true",
-        help="Run browser in headed (visible) mode",
+        "--headed", action="store_true", help="Run in headed (visible) mode"
     )
-
     parser.addoption(
-        "--pw-base-url",
+        "--base-url",
         default="https://tutorialsninja.com/demo/",
         help="Base URL for tests",
     )
-
     parser.addoption(
-        "--pw-video",
+        "--video",
         default="retain-on-failure",
-        choices=["on", "off", "retain-on-failure"],
-        help="Video recording mode",
+        help="Record video: on, off, retain-on-failure",
     )
-
     parser.addoption(
-        "--pw-screenshot",
+        "--screenshot",
         default="only-on-failure",
-        choices=["on", "off", "only-on-failure"],
-        help="Screenshot mode",
+        help="Take screenshot: on, off, only-on-failure",
     )
-
     parser.addoption(
-        "--pw-tracing",
+        "--tracing",
         default="retain-on-failure",
-        choices=["on", "off", "retain-on-failure"],
-        help="Tracing mode",
+        help="Tracing: on, off, retain-on-failure",
     )
 
 
@@ -75,7 +63,7 @@ def get_config_value(config, option_name):
     if cmd_value is not None:
         return cmd_value
 
-    if option_name == "pw-headed":
+    if option_name == "headed":
         ini_value = config.getini(option_name)
         return ini_value.lower() == "true" if isinstance(ini_value, str) else ini_value
     else:
@@ -107,8 +95,8 @@ def playwright_instance():
 # ----------------------------------------------------------------------------
 @pytest.fixture(scope="session")
 def browser(playwright_instance, request):
-    browser_name = get_config_value(request.config, "pw-browser")
-    headed = get_config_value(request.config, "pw-headed")
+    browser_name = get_config_value(request.config, "browser")
+    headed = get_config_value(request.config, "headed")
 
     browser_type = getattr(playwright_instance, browser_name)
     browser_obj = browser_type.launch(headless=not headed)
@@ -133,7 +121,7 @@ def context(browser, request):
 
     ctx = browser.new_context(**context_args)
 
-    tracing_mode = get_config_value(request.config, "pw-tracing")
+    tracing_mode = get_config_value(request.config, "tracing")
     if tracing_mode != "off":
         ctx.tracing.start(screenshots=True, snapshots=True, sources=True)
 
@@ -163,7 +151,7 @@ def page(context, request):
     # Auto-accept any unexpected browser dialogs (alert/confirm) once per page,
     # instead of registering a listener inside individual page-object methods.
     pg.on("dialog", lambda dialog: dialog.accept())
-    base_url = get_config_value(request.config, "pw-base-url")
+    base_url = get_config_value(request.config, "base_url")
     if not base_url.startswith("http"):
         base_url = f"https://{base_url}"
     pg.goto(base_url)
@@ -171,7 +159,7 @@ def page(context, request):
     yield pg
 
     # ----- Screenshot on failure -----
-    screenshot_mode = get_config_value(request.config, "pw-screenshot")
+    screenshot_mode = get_config_value(request.config, "screenshot")
     failed = getattr(request.node, "rep_call", None) and request.node.rep_call.failed
     if screenshot_mode == "on" or (screenshot_mode == "only-on-failure" and failed):
         try:
@@ -186,7 +174,7 @@ def page(context, request):
     pg.close()
 
     # ----- Video attachment -----
-    video_mode = get_config_value(request.config, "pw-video")
+    video_mode = get_config_value(request.config, "video")
     video_should_attach = video_mode == "on" or (
         video_mode == "retain-on-failure" and failed
     )
